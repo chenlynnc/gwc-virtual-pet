@@ -1,7 +1,10 @@
 class Pet:
-    MOOD = ['sad','mad','happy','excited','chill','stressed','relaxed','hungry','onthevergeofdeath']
-    # Static variable: max xp possible
-    # Add dict of skill levels, OR make the current skills dict values an int pair [exp, level]
+    MOOD = ['sad', 'mad', 'happy', 'excited', 'chill', 'stressed', 'relaxed', 'hungry', 'onthevergeofdeath']
+    AGE = ['baby', 'toddler', 'child', 'teen', 'adult']
+    MAX_ENERGY = 100
+    MAX_HYDRATION = 100
+    MAX_AGE_XP = 50
+    MAX_SKILL_XP = 20
 
     def __init__(self, name):
         self.name = name
@@ -9,7 +12,7 @@ class Pet:
         self.hydration_level = 0
         self.happiness = 60
         self.currency = 0
-        self.skills = { # "Skill": 0 exp
+        self.skillXp = { # "Skill": 0 exp
             "Resting" : 0,
             "Productivity" : 0,
             "Outside" : 0,
@@ -18,8 +21,8 @@ class Pet:
         }
         self.mood = "chill"
         self.xp = 0  # Max 50 for now?
-        self.age = 0 # Add list of ages: 0 = baby, 1 = toddler, 2 = child, 3 = teen, 4 = adult
-        self.level = { # "Skill": level
+        self.age = 0 # 0 = baby, 1 = toddler, 2 = child, 3 = teen, 4 = adult
+        self.skillLevel = { # "Skill": level
             "Resting" : 0,
             "Productivity" : 0,
             "Outside" : 0,
@@ -37,6 +40,7 @@ class Pet:
         return
 
     '''
+    Today: 
     using feed(amount) will make the pet more full.
     if hunger is 30/100, feed(15) will make hunger 45/100
     hunger caps out at 100
@@ -50,10 +54,10 @@ class Pet:
         self.addXP(10, "Rest") # we can change the points if we would like, bc idk how much sleep
         
         #should we increase energy level by like 20 and max at 100?
-        if self.energy_level < 100:
+        if self.energy_level < self.MAX_ENERGY:
             self.energy_level += 20
-        if self.energy_level > 100:
-            self.energy_level = 100 #how do we ensure that this won't exceed 100? 
+        if self.energy_level > self.MAX_ENERGY:
+            self.energy_level = self.MAX_ENERGY #how do we ensure that this won't exceed 100? 
             
         print(f"{self.name}'s energy level is now {self.energy_level}%.")
 
@@ -61,24 +65,23 @@ class Pet:
         print(f"Time to rest and rechage, {self.name}!!! Zzzzz...")
 
         return self.energy_level
+        #Hopefully it will run like this 
+        #my_pet = Pet("Buddy")
+        #my_pet.rest()
+        # Output:
+        #buddy earned 20 XP for rest! Total XP : 20
+        #Buddy's energy level is now 70%.
+        # Time to rest and recharge, buddy! Zzzzz....
     
-    #Hopefully it will run like this 
-    #my_pet = Pet("Buddy")
-    #my_pet.rest()
-    # Output:
-    #buddy earned 20 XP for rest! Total XP : 20
-    #Buddy's energy level is now 70%.
-    # Time to rest and recharge, buddy! Zzzzz....
-
     def hydrate(self):
         # when you hydrate your pet, adds XP, and will update the level
         self.addXp(5, "Hydrate")
 
         # increase hydration level by 5? (max out 100? what #)
-        if self.hydration_level < 100:
+        if self.hydration_level < self.MAX_HYDRATION:
                 self.hydration_level += 5
-                if self.hydration_level > 100:
-                    self.hydration_level = 100
+                if self.hydration_level > self.MAX_HYDRATION:
+                    self.hydration_level = self.MAX_HYDRATION
         print(f"{self.name}'s hydration level is now {self.hydration_level}%.")
 
 
@@ -87,7 +90,7 @@ class Pet:
         
         return self.hydration_level
 
-    #technically we can use what i would call like a pet instance so it would be 
+        #technically we can use what i would call like a pet instance so it would be 
         # my_pet = Pet("Buddy")
         # to then hydrate the pet
         # my_pet.hydrate()
@@ -97,24 +100,13 @@ class Pet:
         # then do the print statement/ have it say that 
 
     def beProductive(self):
-        # make "Productivity" skill increase exp
         self.addXp(5, "Productivity")
-
-        return
     
     def goOutside(self):
-        # Play == hobbies?
-        # max 50 for now
-        
-        #Call the method addxp #self, experience, skill = None
-        self.addXp(5, "Outside") #Adds to the outside skill. Am i doing this right? 
-        
-        return
+        self.addXp(5, "Outside")
     
     def connectWith(self):
-        # make "COnnecting" skill increase exp
         self.addXp(5, "Connecting")
-        return
     
     '''
     using levelUp() will increase the pet's age by 1.
@@ -130,59 +122,46 @@ class Pet:
     # min_value = min(myDictionary.values())
     def checkAgeUp(self, skill):
         #Check level of skill
-        current_level = self.level[skill]
-
+        current_level = self.skillLevel[skill]
         
+        #DOnt let the age go past the LAST one
+        #might need self.age level -> increase it to increase age. 
+        #Use if else to check that ALL skills are leveled up. If at least one is left pet does NOT age. 
         
-        if all(skill == current_level for skill in self.level.values()):
-            if self.age < len(self.level):
+        if all(skill == current_level for skill in self.skillLevel.values()):
+            if self.age < len(self.skillLevel):
 
-#DOnt let the age go past the LAST one
-#might need self.age level -> increase it to increase age. 
-#Use if else to check that ALL skills are leveled up. If at least one is left pet does NOT age. 
 
-    def levelUp(self):
+    def ageUp(self):
         print(f"Congrats, you leveled up to: {self.age}")
         self.age += 1 #0/baby, 1-toddler, 2-child, 3-teen, 4-adult
+
         return
     
-    '''
-    Levels up skills.
-    Increase happiness
-    '''
+
     def skillLevelUp(self, skill):
         print("Congrats, you leveled up you skill!!")
-        self.level[skill] += 1 
+        self.skillLevel[skill] += 1 
         return
     
     '''
     Today: Handle leveling up skills.
     '''
     def addXp(self, experience, skill = None):
-        
-
         if skill == None: # addXp(5)
             self.xp += experience # 1. experience gets added
             print(f"{self.name} earned {experience} XP!")
             
-            if self.xp > 50: # 2. check if xp has surpassed max xp limit (aka xp should never surpass 50)
-                self.xp -= 50 # When xp reaches 50, subtract past xp -> go to a new level.
-                self.levelUp() #3. if so, level up and set xp backward
+            if self.xp > self.MAX_AGE_XP: # 2. check if xp has surpassed max xp limit (aka xp should never surpass 50)
+                self.xp -= self.MAX_AGE_XP # When xp reaches 50, subtract past xp -> go to a new level.
+                self.ageUp() #3. if so, level up and set xp backward
                 
         else:
-            self.skills[skill] += experience
+            self.skillXp[skill] += experience
             
             print(f"{self.name} earned {experience} XP for the {skill} skill!")
 
             #Check if skill levels up
-            if self.skills[skill] >= 20: 
-                self.skills[skill] -= 20 #Reset the XP after the skill is leveld up
+            if self.skillXp[skill] >= self.MAX_SKILL_XP: 
+                self.skillXp[skill] -= self.MAX_SKILL_XP #Reset the XP after the skill is leveld up
                 self.skillLevelUp(skill)
-        return
-
-#age and XP are the same thing, how do you want to do it?
-#0/baby, toddler, child, teen, adult
-#  0       1.       2.     3.    4
-#outside, hydrate, eat, sleep, productivity(for study and such), connecting with yourself
-#daily positive quote ^)
-#hunger, happiness, mood, age, currency, skills
